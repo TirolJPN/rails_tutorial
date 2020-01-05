@@ -1,5 +1,5 @@
 FactoryBot.define do
   factory :post do
-    title { 'auto test title' }
+    title { 'title' }
   end
 end

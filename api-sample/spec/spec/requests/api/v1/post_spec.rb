@@ -30,6 +30,37 @@ describe 'PostAPI' do
     expect(json['data']['title']).to eq(post.title)
   end
 
-  
+  it '新しいポストを作成する' do
+    valid_params = { title: 'title' }
+
+    # データが作成されていることを確認する
+    expect { post '/api/v1/posts', params: { post: valid_params} }.to change(Post, :count).by(+1)
+
+    # リクエスト成功を表す200が返ってきたか確認する
+    expect(response.status).to eq(200)
+  end
+
+  it 'ポストの編集を行う' do
+    post = FactoryBot.create(:post, title: 'old-title')
+
+    put "/api/v1/posts/#{post.id}", params: { post: { title: 'new-title' } }
+    json = JSON.parse(response.body)
+
+    # リクエスト成功を表す200が返ってきたかを確認する
+    expect(response.status).to eq(200)
+
+    # データが更新されていることを確認する
+    expect(json['data']['title']).to eq('new-title')
+  end
+
+  it 'ポストの削除を行う' do
+    post = FactoryBot.create(:post)
+
+    # データが削除されていることを確認する
+    expect { delete "/api/v1/posts/#{post.id}" }.to change(Post, :count).by(-1)
+
+    # リクエスト成功を表す200が返ってきたことを確認する
+    expect(response.status).to eq(200)
+  end
 end
 
